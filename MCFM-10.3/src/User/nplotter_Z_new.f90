@@ -21,6 +21,7 @@ module nplotter_Z
           use types
           use parseinput
           implicit none
+          integer :: i
           include 'mpicommon.f'
 
           include 'first.f'    
@@ -28,7 +29,7 @@ module nplotter_Z
             write(6,*) 'Using plotting routine nplotter_Z_new.f90'
             first=.false.
           endif
-          allocate(histos(1))
+          allocate(histos(12))
 
           if (rank == 0) then
               write (*,*) "RESUMMATION: Using transition with switch ", transitionSwitch
@@ -38,6 +39,16 @@ module nplotter_Z
           5.0000d0,6.0000d0,7.0000d0,8.0000d0,9.0000d0,10.0000d0,12.0000d0, &
           14.0000d0,16.0000d0,18.0000d0,20.0000d0,23.0000d0,27.0000d0,32.0000d0, &
           40.0000d0, 55.0000d0,100.0000d0], 'pt34_fine')
+
+          histos(2) = plot_setup_uniform(0.00_dp,2.50_dp,0.25_dp,'y34')
+        
+        do i = 3, 12
+            histos(i) = plot_setup_custom([0.0000d0,2.0000d0,3.0000d0,4.0000d0, &
+            5.0000d0,6.0000d0,7.0000d0,8.0000d0,9.0000d0, &
+            10.0000d0,12.0000d0,14.0000d0,16.0000d0,18.0000d0, &
+            20.0000d0,23.0000d0,27.0000d0,32.0000d0,40.0000d0, &
+            55.0000d0,100.0000d0], 'pt34_fine')
+        end do
 
           IF (.false.) THEN
             histos(1) = plot_setup_custom([0.0010d0,0.0013d0,0.0016d0,0.0020d0, &
@@ -96,10 +107,10 @@ module nplotter_Z
           real(dp) :: pt34, trans04, trans06
           real(dp) :: phistar, phiacop, costhetastar, delphi34
           real(dp) :: yrappure, y34
+          real(dp) :: wt3, wt4, wt5, wt6, wt7, wt8, wt9, wt10, wt11, wt12
 
           pt34 = pttwo(3,4,p)
-          y34 = yrappure(p(3,:)+p(4,:))
-
+          y34 = ABS(yrappure(p(3,:)+p(4,:)))
           delphi34 = delphi(p(3,:),p(4,:))
           phiacop = 2._dp*atan(sqrt((1._dp+cos(delphi34))/(1._dp-cos(delphi34))))
           costhetastar = tanh((etarap(3,p)-etarap(4,p))/2._dp)
@@ -134,9 +145,79 @@ module nplotter_Z
           ! then with 0.4 transition function, then with 0.6 transition function
           ! for estimating matching uncertainty
 
+        ! slice 3
+        if (y34 > 0.00 .and. y34 < 0.25) then
+            wt3 = wt
+        else
+            wt3 = 0._dp
+        endif
+
+        ! slice 4
+        if (y34 > 0.25 .and. y34 < 0.50) then
+            wt4 = wt
+        else
+            wt4 = 0._dp
+        endif
+
+        ! slice 5
+        if (y34 > 0.50 .and. y34 < 0.75) then
+            wt5 = wt
+        else
+            wt5 = 0._dp
+        endif
+
+        ! slice 6
+        if (y34 > 0.75 .and. y34 < 1.00) then
+            wt6 = wt
+        else
+            wt6 = 0._dp
+        endif
+
+        ! slice 7
+        if (y34 > 1.00 .and. y34 < 1.25) then
+            wt7 = wt
+        else
+            wt7 = 0._dp
+        endif
+
+        ! slice 8
+        if (y34 > 1.25 .and. y34 < 1.50) then
+            wt8 = wt
+        else
+            wt8 = 0._dp
+        endif
+
+        ! slice 9
+        if (y34 > 1.50 .and. y34 < 1.75) then
+            wt9 = wt
+        else
+            wt9 = 0._dp
+        endif
+
+        ! slice 10
+        if (y34 > 1.75 .and. y34 < 2.00) then
+            wt10 = wt
+        else
+            wt10 = 0._dp
+        endif
+
+        ! slice 11
+        if (y34 > 2.00 .and. y34 < 2.25) then
+            wt11 = wt
+        else
+            wt11 = 0._dp
+        endif
+
+        ! slice 12
+        if (y34 > 2.25 .and. y34 < 2.50) then
+            wt12 = wt
+        else
+            wt12 = 0._dp
+        endif
+
           ids = histos
-          vals = [pt34, y34]
-          wts  = [wt, wt]
+          vals = [pt34, y34, pt34, pt34, pt34, pt34, pt34, pt34, pt34, pt34, pt34, pt34]
+          wts = [wt, wt, wt3, wt4, wt5, wt6, wt7, wt8, wt9, wt10, wt11, wt12]
 
       end subroutine
 
