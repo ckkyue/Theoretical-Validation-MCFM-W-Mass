@@ -22,6 +22,8 @@ module nplotter_Z
           use parseinput
           implicit none
           integer :: i
+          character(len=10) :: histo_name
+
           include 'mpicommon.f'
 
           include 'first.f'    
@@ -35,17 +37,21 @@ module nplotter_Z
               write (*,*) "RESUMMATION: Using transition with switch ", transitionSwitch
           endif
         
-        do i = 1, 12
-            if (i == 2) then
-                histos(i) = plot_setup_uniform(0.00_dp,2.50_dp,0.25_dp,'y34')
-                cycle
-            else
-                histos(i) = plot_setup_custom([0.0000d0,2.0000d0,3.0000d0,4.0000d0, &
-                5.0000d0,6.0000d0,7.0000d0,8.0000d0,9.0000d0, &
-                10.0000d0,12.0000d0,14.0000d0,16.0000d0,18.0000d0, &
-                20.0000d0,23.0000d0,27.0000d0,32.0000d0,40.0000d0, &
-                55.0000d0,100.0000d0], 'pt34_fine')
-            endif
+        histos(1) = plot_setup_custom([0.0000d0,2.0000d0,3.0000d0,4.0000d0, &
+                            5.0000d0,6.0000d0,7.0000d0,8.0000d0,9.0000d0, &
+                            10.0000d0,12.0000d0,14.0000d0,16.0000d0,18.0000d0, &
+                            20.0000d0,23.0000d0,27.0000d0,32.0000d0,40.0000d0, &
+                            55.0000d0,100.0000d0], 'pt34_fine')
+
+        histos(2) = plot_setup_uniform(0.00_dp,2.50_dp,0.25_dp,'y34')
+
+        do i = 3, 12
+            write(histo_name, '(a, i0)') 'pt34_', i
+            histos(i) = plot_setup_custom([0.0000d0,2.0000d0,3.0000d0,4.0000d0, &
+                            5.0000d0,6.0000d0,7.0000d0,8.0000d0,9.0000d0, &
+                            10.0000d0,12.0000d0,14.0000d0,16.0000d0,18.0000d0, &
+                            20.0000d0,23.0000d0,27.0000d0,32.0000d0,40.0000d0, &
+                            55.0000d0,100.0000d0], histo_name)
         end do
 
           IF (.false.) THEN
