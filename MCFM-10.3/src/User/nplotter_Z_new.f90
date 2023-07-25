@@ -34,20 +34,18 @@ module nplotter_Z
           if (rank == 0) then
               write (*,*) "RESUMMATION: Using transition with switch ", transitionSwitch
           endif
-
-          histos(1) = plot_setup_custom([0.0000d0,2.0000d0,3.0000d0,4.0000d0, &
-          5.0000d0,6.0000d0,7.0000d0,8.0000d0,9.0000d0,10.0000d0,12.0000d0, &
-          14.0000d0,16.0000d0,18.0000d0,20.0000d0,23.0000d0,27.0000d0,32.0000d0, &
-          40.0000d0, 55.0000d0,100.0000d0], 'pt34_fine')
-
-          histos(2) = plot_setup_uniform(0.00_dp,2.50_dp,0.25_dp,'y34')
         
-        do i = 3, 12
-            histos(i) = plot_setup_custom([0.0000d0,2.0000d0,3.0000d0,4.0000d0, &
-            5.0000d0,6.0000d0,7.0000d0,8.0000d0,9.0000d0, &
-            10.0000d0,12.0000d0,14.0000d0,16.0000d0,18.0000d0, &
-            20.0000d0,23.0000d0,27.0000d0,32.0000d0,40.0000d0, &
-            55.0000d0,100.0000d0], 'pt34_fine')
+        do i = 1, 12
+            if (i == 2) then
+                histos(i) = plot_setup_uniform(0.00_dp,2.50_dp,0.25_dp,'y34')
+                cycle
+            else
+                histos(i) = plot_setup_custom([0.0000d0,2.0000d0,3.0000d0,4.0000d0, &
+                5.0000d0,6.0000d0,7.0000d0,8.0000d0,9.0000d0, &
+                10.0000d0,12.0000d0,14.0000d0,16.0000d0,18.0000d0, &
+                20.0000d0,23.0000d0,27.0000d0,32.0000d0,40.0000d0, &
+                55.0000d0,100.0000d0], 'pt34_fine')
+            endif
         end do
 
           IF (.false.) THEN
@@ -106,8 +104,10 @@ module nplotter_Z
           real(dp) :: pttwo, twomass, delphi, etarap
           real(dp) :: pt34, trans04, trans06
           real(dp) :: phistar, phiacop, costhetastar, delphi34
+
           real(dp) :: yrappure, y34
-          real(dp) :: wt3, wt4, wt5, wt6, wt7, wt8, wt9, wt10, wt11, wt12
+          real(dp) :: wt_array(12) 
+          integer :: i
 
           pt34 = pttwo(3,4,p)
           y34 = ABS(yrappure(p(3,:)+p(4,:)))
@@ -145,79 +145,19 @@ module nplotter_Z
           ! then with 0.4 transition function, then with 0.6 transition function
           ! for estimating matching uncertainty
 
-        ! slice 3
-        if (y34 > 0.00 .and. y34 < 0.25) then
-            wt3 = wt
-        else
-            wt3 = 0._dp
-        endif
-
-        ! slice 4
-        if (y34 > 0.25 .and. y34 < 0.50) then
-            wt4 = wt
-        else
-            wt4 = 0._dp
-        endif
-
-        ! slice 5
-        if (y34 > 0.50 .and. y34 < 0.75) then
-            wt5 = wt
-        else
-            wt5 = 0._dp
-        endif
-
-        ! slice 6
-        if (y34 > 0.75 .and. y34 < 1.00) then
-            wt6 = wt
-        else
-            wt6 = 0._dp
-        endif
-
-        ! slice 7
-        if (y34 > 1.00 .and. y34 < 1.25) then
-            wt7 = wt
-        else
-            wt7 = 0._dp
-        endif
-
-        ! slice 8
-        if (y34 > 1.25 .and. y34 < 1.50) then
-            wt8 = wt
-        else
-            wt8 = 0._dp
-        endif
-
-        ! slice 9
-        if (y34 > 1.50 .and. y34 < 1.75) then
-            wt9 = wt
-        else
-            wt9 = 0._dp
-        endif
-
-        ! slice 10
-        if (y34 > 1.75 .and. y34 < 2.00) then
-            wt10 = wt
-        else
-            wt10 = 0._dp
-        endif
-
-        ! slice 11
-        if (y34 > 2.00 .and. y34 < 2.25) then
-            wt11 = wt
-        else
-            wt11 = 0._dp
-        endif
-
-        ! slice 12
-        if (y34 > 2.25 .and. y34 < 2.50) then
-            wt12 = wt
-        else
-            wt12 = 0._dp
-        endif
+        ! slice 3 to 12
+        do i = 3, 12
+            if (y34 > 0.25*(i-3) .and. y34 < 0.25*(i-2)) then
+                wt_array(i) = wt
+            else
+                wt_array(i) = 0._dp
+            endif
+        end do
 
           ids = histos
           vals = [pt34, y34, pt34, pt34, pt34, pt34, pt34, pt34, pt34, pt34, pt34, pt34]
-          wts = [wt, wt, wt3, wt4, wt5, wt6, wt7, wt8, wt9, wt10, wt11, wt12]
+          wts = [wt, wt, wt_array(3), wt_array(4), wt_array(5), wt_array(6), wt_array(7), &
+          wt_array(8), wt_array(9), wt_array(10), wt_array(11), wt_array(12)]
 
       end subroutine
 
