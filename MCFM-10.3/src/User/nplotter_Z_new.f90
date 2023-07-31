@@ -25,33 +25,42 @@ module nplotter_Z
           character(len=10) :: histo_name
 
           include 'mpicommon.f'
-
           include 'first.f'    
+
           if (first .and. rank == 0) then
             write(6,*) 'Using plotting routine nplotter_Z_new.f90'
             first=.false.
           endif
-          allocate(histos(12))
+          allocate(histos(42))
 
           if (rank == 0) then
               write (*,*) "RESUMMATION: Using transition with switch ", transitionSwitch
           endif
         
-        histos(1) = plot_setup_custom([0.0000d0,2.0000d0,3.0000d0,4.0000d0, &
-                            5.0000d0,6.0000d0,7.0000d0,8.0000d0,9.0000d0, &
-                            10.0000d0,12.0000d0,14.0000d0,16.0000d0,18.0000d0, &
-                            20.0000d0,23.0000d0,27.0000d0,32.0000d0,40.0000d0, &
-                            55.0000d0,100.0000d0], 'pt34_fine')
+        histos(1) = plot_setup_custom([0.1000d0, (/(i*1.0000d0, i=1, 100)/)], 'pt34_fine')
 
-        histos(2) = plot_setup_uniform(0.00_dp,2.50_dp,0.25_dp,'y34')
+        ! histos(1) = plot_setup_custom([0.0000d0,2.0000d0,3.0000d0,4.0000d0, &
+        !                     5.0000d0,6.0000d0,7.0000d0,8.0000d0,9.0000d0, &
+        !                     10.0000d0,12.0000d0,14.0000d0,16.0000d0,18.0000d0, &
+        !                     20.0000d0,23.0000d0,27.0000d0,32.0000d0,40.0000d0, &
+        !                     55.0000d0,100.0000d0], 'pt34_fine')
 
-        do i = 3, 12
+        histos(2) = plot_setup_uniform(-5.00_dp,5.00_dp,0.25_dp,'y34')
+
+        ! histos(2) = plot_setup_uniform(0.00_dp,2.50_dp,0.25_dp,'y34')
+
+        do i = 3, 42
             write(histo_name, '(a, i0)') 'pt34_', i
-            histos(i) = plot_setup_custom([0.0000d0,2.0000d0,3.0000d0,4.0000d0, &
-                            5.0000d0,6.0000d0,7.0000d0,8.0000d0,9.0000d0, &
-                            10.0000d0,12.0000d0,14.0000d0,16.0000d0,18.0000d0, &
-                            20.0000d0,23.0000d0,27.0000d0,32.0000d0,40.0000d0, &
-                            55.0000d0,100.0000d0], histo_name)
+                histos(i) = plot_setup_custom([0.1000d0, (/(i*1.0000d0, i=1, 100)/)], histo_name)
+
+        ! do i = 3, 12
+        !     write(histo_name, '(a, i0)') 'pt34_', i
+        !     histos(i) = plot_setup_custom([0.0000d0,2.0000d0,3.0000d0,4.0000d0, &
+        !                     5.0000d0,6.0000d0,7.0000d0,8.0000d0,9.0000d0, &
+        !                     10.0000d0,12.0000d0,14.0000d0,16.0000d0,18.0000d0, &
+        !                     20.0000d0,23.0000d0,27.0000d0,32.0000d0,40.0000d0, &
+        !                     55.0000d0,100.0000d0], histo_name)
+
         end do
 
           IF (.false.) THEN
@@ -112,11 +121,12 @@ module nplotter_Z
           real(dp) :: phistar, phiacop, costhetastar, delphi34
 
           real(dp) :: yrappure, y34
-          real(dp) :: wt_array(12) 
+          real(dp) :: wt_array(42) 
           integer :: i
 
           pt34 = pttwo(3,4,p)
-          y34 = ABS(yrappure(p(3,:)+p(4,:)))
+          y34 = yrappure(p(3,:)+p(4,:))
+        !   y34 = ABS(yrappure(p(3,:)+p(4,:)))
           delphi34 = delphi(p(3,:),p(4,:))
           phiacop = 2._dp*atan(sqrt((1._dp+cos(delphi34))/(1._dp-cos(delphi34))))
           costhetastar = tanh((etarap(3,p)-etarap(4,p))/2._dp)
@@ -151,19 +161,27 @@ module nplotter_Z
           ! then with 0.4 transition function, then with 0.6 transition function
           ! for estimating matching uncertainty
 
-        ! slice 3 to 12
-        do i = 3, 12
-            if (y34 > 0.25*(i-3) .and. y34 < 0.25*(i-2)) then
+        ! slice 3 to 42
+        do i = 3, 42
+            if (y34 > 0.25*(i-23) .and. y34 < 0.25*(i-22)) then
                 wt_array(i) = wt
             else
                 wt_array(i) = 0._dp
             endif
         end do
 
+        ! ! slice 3 to 12
+        ! do i = 3, 12
+        !     if (y34 > 0.25*(i-3) .and. y34 < 0.25*(i-2)) then
+        !         wt_array(i) = wt
+        !     else
+        !         wt_array(i) = 0._dp
+        !     endif
+        ! end do
+
           ids = histos
-          vals = [pt34, y34, pt34, pt34, pt34, pt34, pt34, pt34, pt34, pt34, pt34, pt34]
-          wts = [wt, wt, wt_array(3), wt_array(4), wt_array(5), wt_array(6), wt_array(7), &
-          wt_array(8), wt_array(9), wt_array(10), wt_array(11), wt_array(12)]
+          vals = [pt34, y34, (pt34, i=3, 42)]
+          wts = [wt, wt, (wt_array(i), i=3, 42)] 
 
       end subroutine
 
