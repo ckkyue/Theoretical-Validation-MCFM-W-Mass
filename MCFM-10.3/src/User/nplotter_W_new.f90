@@ -26,7 +26,7 @@ module nplotter_W
 
           include 'mpicommon.f'
 
-          allocate(histos(36))
+          allocate(histos(18))
 
           if (rank == 0) then
               write (*,*) "RESUMMATION: Using transition with switch ", transitionSwitch
@@ -44,7 +44,15 @@ module nplotter_W
         !         10.0000d0,12.5893d0,15.8489d0,19.9526d0,25.1189d0, &
         !         31.6228d0,39.8107d0,50.1187d0,63.0957d0,79.4328d0,100.0000d0], &
         !         'pt34_fine')
+
+        histos(2) = plot_setup_custom([(0.25_dp*i, i=0, 14), 4.00_dp, 5.00_dp], 'y34')
+
         !   histos(2) = plot_setup_uniform(0.0_dp,60._dp,1.0_dp,'pt34')
+
+        do i = 3, 18
+            write(histo_name, '(a, i0)') 'pt34_', i
+                histos(i) = plot_setup_uniform(0.00_dp, 100.00_dp, 1.00_dp, histo_name)
+        end do
 
         !   histos(3) = plot_setup_custom([0d0,7.5d0,12.5d0,17.5d0, &
         !       24d0,30d0,40d0,50d0,70d0,110d0,150d0,190d0,250d0,600d0],'pt34_cms')
@@ -56,12 +64,12 @@ module nplotter_W
         !       0.312d0,0.391d0,0.524d0,0.695d0,0.918d0,1.153d0,1.496d0, &
         !       1.947d0,2.522d0,3.277d0,5d0,10d0],'phistar_atlas')
 
-        histos(2) = plot_setup_custom([-5.00_dp, (-4.00_dp+0.25_dp*i, i=0, 32), 5.00_dp], 'y34')
+        ! histos(2) = plot_setup_custom([-5.00_dp, (-4.00_dp+0.25_dp*i, i=0, 32), 5.00_dp], 'y34')
 
-        do i = 3, 36
-            write(histo_name, '(a, i0)') 'pt34_', i
-                histos(i) = plot_setup_uniform(0.00_dp, 100.00_dp, 1.00_dp, histo_name)
-        end do
+        ! do i = 3, 36
+        !     write(histo_name, '(a, i0)') 'pt34_', i
+        !         histos(i) = plot_setup_uniform(0.00_dp, 100.00_dp, 1.00_dp, histo_name)
+        ! end do
 
       end subroutine
 
@@ -87,11 +95,12 @@ module nplotter_W
           real(dp) :: phistar, phiacop, costhetastar, delphi34
 
           real(dp) :: yrappure, y34
-          real(dp) :: wt_array(36)
+          real(dp) :: wt_array(18)
           integer :: i
 
           pt34 = pttwo(3,4,p)
-          y34 = yrappure(p(3,:)+p(4,:))
+        !   y34 = yrappure(p(3,:)+p(4,:))
+          y34 = ABS(yrappure(p(3,:)+p(4,:)))
           delphi34 = delphi(p(3,:),p(4,:))
           phiacop = 2._dp*atan(sqrt((1._dp+cos(delphi34))/(1._dp-cos(delphi34))))
           costhetastar = tanh((etarap(3,p)-etarap(4,p))/2._dp)
@@ -116,32 +125,57 @@ module nplotter_W
               phistar = -1._dp
           endif
 
-        ! slice 3
-          if (y34 > -5 .and. y34 < -4)then
-              wt_array(3) = wt
-          else
-              wt_array(3) = 0._dp
-          end if
-
-        ! slice 36
-          if (y34 > 4 .and. y34 < 5) then
-              wt_array(36) = wt
-          else
-              wt_array(36) = 0._dp
-          end if
-
-        ! slice 4 to 35
-        do i = 4, 35
-            if (y34 > 0.25*(i-20) .and. y34 < 0.25*(i-19)) then
+        ! slice 3 to 16
+        do i = 3, 16
+            if (y34 > 0.25*(i-3) .and. y34 < 0.25*(i-2)) then
                 wt_array(i) = wt
             else
                 wt_array(i) = 0._dp
             endif
         end do
 
+        ! slice 17
+        if (y34 > 3.5 .and. y34 < 4) then
+            wt_array(17) = wt
+        else
+            wt_array(17) = 0._dp
+        endif
+
+        ! slice 18
+        if (y34 > 4 .and. y34 < 5) then
+            wt_array(18) = wt
+        else
+            wt_array(18) = 0._dp
+        endif
+
+        ! ! slice 3
+        !   if (y34 > -5 .and. y34 < -4)then
+        !       wt_array(3) = wt
+        !   else
+        !       wt_array(3) = 0._dp
+        !   end if
+
+        ! ! slice 36
+        !   if (y34 > 4 .and. y34 < 5) then
+        !       wt_array(36) = wt
+        !   else
+        !       wt_array(36) = 0._dp
+        !   end if
+
+        ! ! slice 4 to 35
+        ! do i = 4, 35
+        !     if (y34 > 0.25*(i-20) .and. y34 < 0.25*(i-19)) then
+        !         wt_array(i) = wt
+        !     else
+        !         wt_array(i) = 0._dp
+        !     endif
+        ! end do
+
           ids = histos
-          vals = [pt34, y34, (pt34, i=3, 36)]
-          wts = [wt, wt, (wt_array(i), i=3, 36)]
+          vals = [pt34, y34, (pt34, i=3, 18)]
+          wts = [wt, wt, (wt_array(i), i=3, 18)]
+        !   vals = [pt34, y34, (pt34, i=3, 36)]
+        !   wts = [wt, wt, (wt_array(i), i=3, 36)]
         !   vals = [pt34,pt34,pt34,phistar]
         !   wts = [wt*trans,wt*trans,wt*trans,wt*trans]
 
