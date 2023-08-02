@@ -181,7 +181,7 @@ module nplotter_Z
 
           ids = histos
           vals = [pt34, y34, (pt34, i=3, 42)]
-          wts = [wt, wt, (wt_array(i), i=3, 42)] 
+          wts = [wt, wt, (wt_array(i), i=3, 42)]
 
       end subroutine
 
