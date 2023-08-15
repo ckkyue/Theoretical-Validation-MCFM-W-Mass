@@ -46,7 +46,7 @@ module nplotter_Z
         !                     10.0000d0,12.0000d0,14.0000d0,16.0000d0,18.0000d0, &
         !                     20.0000d0,23.0000d0,27.0000d0,32.0000d0,40.0000d0, &
         !                     55.0000d0,100.0000d0], 'pt34_fine')
-        
+
         histos(2) = plot_setup_custom([(0.25_dp*i, i=0, 14), 4.00_dp, 5.00_dp], 'y34')
 
         ! histos(2) = plot_setup_uniform(-5.00_dp,5.00_dp,0.25_dp,'y34')
@@ -56,6 +56,7 @@ module nplotter_Z
         do i = 3, 18
             write(histo_name, '(a, i0)') 'pt34_', i
                 histos(i) = plot_setup_uniform(0.00_dp, 100.00_dp, 1.00_dp, histo_name)
+        end do
 
         ! do i = 3, 42
         !     write(histo_name, '(a, i0)') 'pt34_', i
@@ -68,8 +69,7 @@ module nplotter_Z
         !                     10.0000d0,12.0000d0,14.0000d0,16.0000d0,18.0000d0, &
         !                     20.0000d0,23.0000d0,27.0000d0,32.0000d0,40.0000d0, &
         !                     55.0000d0,100.0000d0], histo_name)
-
-        end do
+        ! end do
 
           IF (.false.) THEN
             histos(1) = plot_setup_custom([0.0010d0,0.0013d0,0.0016d0,0.0020d0, &
@@ -192,7 +192,6 @@ module nplotter_Z
             wt_array(18) = 0._dp
         endif
 
-
         ! ! slice 3 to 42
         ! do i = 3, 42
         !     if (y34 > 0.25*(i-23) .and. y34 < 0.25*(i-22)) then
@@ -215,7 +214,7 @@ module nplotter_Z
           vals = [pt34, y34, (pt34, i=3, 18)]
           wts = [wt, wt, (wt_array(i), i=3, 18)]
         !   vals = [pt34, y34, (pt34, i=3, 42)]
-        !   wts = [wt, wt, (wt_array(i), i=3, 42)]
+        !   wts = [wt, wt, (wt_array(i), i=3, 42)] 
 
       end subroutine
 
