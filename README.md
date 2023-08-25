@@ -1,5 +1,5 @@
 # Theoretical-Validation-MCFM-W-Mass
-This repository contains files for analyzing MCFM fixed-order calculations of Z, W+, and W- dileptonic decays.
+This repository contains files for analyzing MCFM fixed-order calculations of Z and W dileptonic decays.
 # Data
 The Data folder contains the files related to the analysis of MCFM calculations.
 # Data/PDFs
