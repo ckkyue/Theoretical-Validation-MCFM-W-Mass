@@ -7,3 +7,12 @@ The Data/PDFs subfolder contains codes that study the two PDF sets used in MCFM:
 Additionally, a perturbative toy PDF model is constructed and compared with the PDF sets.
 # MCFM-10.3
 The MCFM-10.3 folder contains codes that define input configurations and binning of histograms produced in MCFM.
+To start the program, first go to Bin
+```bash
+cd MCFM-10.3/Bin
+```
+and run
+```bash
+make -j256 ; export OMP_STACKSIZE=512000 ; ./mcfm input_Z.ini
+```
+which you should replace input_Z.ini with the desired file.
