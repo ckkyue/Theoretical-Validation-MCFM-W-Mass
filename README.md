@@ -15,4 +15,4 @@ and run
 ```bash
 make -j256 ; export OMP_STACKSIZE=512000 ; ./mcfm input_Z.ini
 ```
-which you should replace input_Z.ini with the desired file.
+which you should replace input_Z.ini with the file that provides the input configuration.
